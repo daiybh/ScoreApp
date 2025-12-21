@@ -1,0 +1,49 @@
+<view class="container">
+  <view class="form">
+    <view class="form-group">
+      <label class="form-label">姓名</label>
+      <input class="form-input" placeholder="请输入姓名" bindinput="bindNameInput" value="{{name}}"/>
+    </view>
+
+    <view class="form-group">
+      <label class="form-label">当前成绩</label>
+      <input class="form-input" type="number" placeholder="请输入当前成绩" bindinput="bindScoreInput" value="{{score}}"/>
+    </view>
+
+    <view class="form-group">
+      <label class="form-label">班级最高分</label>
+      <input class="form-input" type="number" placeholder="请输入班级最高分" bindinput="bindMaxScoreInput" value="{{maxScore}}"/>
+    </view>
+
+    <view class="form-group">
+      <label class="form-label">班级平均分</label>
+      <input class="form-input" type="number" placeholder="请输入班级平均分" bindinput="bindAvgScoreInput" value="{{avgScore}}"/>
+    </view>
+
+    <view class="form-group">
+      <label class="form-label">班级排名</label>
+      <input class="form-input" type="number" placeholder="请输入班级排名" bindinput="bindRankInput" value="{{rank}}"/>
+    </view>
+
+    <view class="form-group">
+      <label class="form-label">科目</label>
+      <input class="form-input" placeholder="请输入科目" bindinput="bindSubjectInput" value="{{subject}}"/>
+    </view>
+
+    <view class="form-group">
+      <label class="form-label">考试内容</label>
+      <input class="form-input" placeholder="请输入考试内容" bindinput="bindExamContentInput" value="{{examContent}}"/>
+    </view>
+
+    <view class="form-group">
+      <label class="form-label">考试时间</label>
+      <picker mode="date" value="{{examTime}}" bindchange="bindDateChange">
+        <view class="picker">
+          {{examTime || '请选择考试时间'}}
+        </view>
+      </picker>
+    </view>
+
+    <button class="btn btn-primary" bindtap="submitForm">提交</button>
+  </view>
+</view>

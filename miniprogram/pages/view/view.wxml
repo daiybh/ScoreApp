@@ -1,0 +1,32 @@
+<view class="container">
+  <view class="search-bar">
+    <view class="form-group">
+      <label class="form-label">姓名</label>
+      <input class="form-input" placeholder="请输入姓名" bindinput="bindNameInput" value="{{name}}"/>
+    </view>
+
+    <view class="form-group">
+      <label class="form-label">科目（可选）</label>
+      <input class="form-input" placeholder="请输入科目" bindinput="bindSubjectInput" value="{{subject}}"/>
+    </view>
+
+    <button class="btn btn-primary" bindtap="searchScores">查询</button>
+  </view>
+
+  <view class="scores-list" wx:if="{{scores.length > 0}}">
+    <view class="card" wx:for="{{scores}}" wx:key="index">
+      <view class="card-title">{{item.subject}} - {{item.examTime}}</view>
+      <view class="card-content">
+        <view class="score-item">考试内容: {{item.examContent || '无'}}</view>
+        <view class="score-item">当前成绩: {{item.score}}</view>
+        <view class="score-item">班级最高分: {{item.maxScore || '无'}}</view>
+        <view class="score-item">班级平均分: {{item.avgScore || '无'}}</view>
+        <view class="score-item">班级排名: {{item.rank || '无'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-result" wx:if="{{searched && scores.length === 0}}">
+    <text>没有找到相关成绩记录</text>
+  </view>
+</view>

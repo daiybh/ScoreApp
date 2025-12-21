@@ -1,0 +1,23 @@
+/**view.wxss**/
+.search-bar {
+  width: 90%;
+  margin: 20rpx auto;
+}
+
+.scores-list {
+  width: 100%;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+}
+
+.score-item {
+  margin: 10rpx 0;
+  font-size: 28rpx;
+}
+
+.empty-result {
+  margin-top: 100rpx;
+  text-align: center;
+  color: #999;
+  font-size: 30rpx;
+}

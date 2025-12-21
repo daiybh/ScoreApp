@@ -1,0 +1,14 @@
+/**add.wxss**/
+.form {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.picker {
+  padding: 20rpx;
+  background-color: #fff;
+  border: 1rpx solid #ddd;
+  border-radius: 4rpx;
+  font-size: 28rpx;
+  color: #333;
+}
