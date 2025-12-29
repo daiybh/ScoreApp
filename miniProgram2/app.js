@@ -10,6 +10,6 @@ App({
   },
   globalData: {
     userInfo: null,
-    serverUrl: 'http://localhost:5000/api'
+    serverUrl: 'https://scoreapp.hyman.store:8081/api'
   }
 })

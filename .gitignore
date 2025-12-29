@@ -112,3 +112,5 @@ miniprogram/node_modules/
 miniprogram/miniprogram_npm/
 test/tDownload.py
 .DS_Store
+server/.qiniu_pythonsdk_hostscache.json
+server_golang/main.exe
