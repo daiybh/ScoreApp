@@ -199,7 +199,6 @@ func (h *Handlers) SetupRoutes() *gin.Engine {
 	// 静态文件服务
 	r.Static("/static", "./static")
 	r.StaticFile("/", "./static/index.html")
-	r.StaticFile("/app.js", "./static/app.js")
 
 	// API路由组
 	api := r.Group("/api")
