@@ -19,6 +19,7 @@ type ScoreRequest struct {
 	Score       string `json:"score" binding:"required"`
 	MaxScore    string `json:"maxScore"`
 	AvgScore    string `json:"avgScore"`
+	HighScore   string `json:"highScore"`
 	Rank        string `json:"rank"`
 	Subject     string `json:"subject" binding:"required"`
 	ExamContent string `json:"examContent"`
@@ -194,6 +195,11 @@ func (h *Handlers) SetupRoutes() *gin.Engine {
 
 		c.Next()
 	})
+
+	// 静态文件服务
+	r.Static("/static", "./static")
+	r.StaticFile("/", "./static/index.html")
+	r.StaticFile("/app.js", "./static/app.js")
 
 	// API路由组
 	api := r.Group("/api")

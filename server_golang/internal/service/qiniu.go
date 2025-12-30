@@ -34,7 +34,7 @@ func NewQiniuService(cfg *config.Config) *QiniuService {
 
 	// 配置上传参数
 	cfgUp := storage.Config{
-		Zone:          &storage.ZoneHuadong, // 华东区
+		Zone:          &storage.Zone_z2, // 华东区
 		UseHTTPS:      true,
 		UseCdnDomains: false,
 	}
@@ -122,21 +122,20 @@ func (s *QiniuService) ListFiles(prefix string) ([]map[string]interface{}, error
 
 	// 设置列出文件的前缀
 	limit := 1000
-	retItems, _, _, eof, err := bucketManager.ListFiles(s.bucket, prefix, "", "", limit)
+	retItems, _, _, hasNext, err := bucketManager.ListFiles(s.bucket, prefix, "", "", limit)
 	if err != nil {
 		log.Printf("列出文件失败: %v", err)
 		return nil, err
 	}
-
 	// 如果还有更多文件，继续获取
-	if !eof {
-		moreItems, _, _, moreEof, err := bucketManager.ListFiles(s.bucket, prefix, "", "", limit)
+	if hasNext {
+		moreItems, _, _, moreHasNext, err := bucketManager.ListFiles(s.bucket, prefix, "", "", limit)
 		if err != nil {
 			log.Printf("列出更多文件失败: %v", err)
 			return nil, err
 		}
 		retItems = append(retItems, moreItems...)
-		eof = moreEof
+		hasNext = moreHasNext
 	}
 
 	// 转换为map数组
