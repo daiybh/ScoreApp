@@ -265,8 +265,11 @@ function displayScoreChart(scores) {
         colorIndex++;
     }
     
-    // 初始化图表
-    const chartInstance = echarts.init(scoreChartElement);
+    // 初始化图表，设置尺寸
+    const chartInstance = echarts.init(scoreChartElement, null, {
+        width: 'auto',
+        height: 400
+    });
     
     // 配置图表选项
     const option = {
@@ -295,9 +298,10 @@ function displayScoreChart(scores) {
             top: 30
         },
         grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '15%',
+            left: '5%',
+            right: '5%',
+            bottom: '20%',
+            top: '15%',
             containLabel: true
         },
         toolbox: {
@@ -339,10 +343,18 @@ function displayScoreChart(scores) {
     // 显示图表容器
     chartContainer.style.display = 'block';
     
+    // 确保图表容器有足够的宽度
+    scoreChartElement.style.width = '100%';
+    
     // 响应式调整
     window.addEventListener('resize', function() {
         chartInstance.resize();
     });
+    
+    // 初始调整大小
+    setTimeout(() => {
+        chartInstance.resize();
+    }, 100);
 }
 
 // 页面加载完成后的初始化
