@@ -18,20 +18,20 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "iconPath": "images/home.png",
-        "selectedIconPath": "images/home-active.png",
+        "iconPath": "images/default.jpg",
+        "selectedIconPath": "images/default.jpg",
         "text": "首页"
       },
       {
         "pagePath": "pages/add/add",
-        "iconPath": "images/add.png",
-        "selectedIconPath": "images/add-active.png",
+        "iconPath": "images/default.jpg",
+        "selectedIconPath": "images/default.jpg",
         "text": "添加成绩"
       },
       {
         "pagePath": "pages/view/view",
-        "iconPath": "images/view.png",
-        "selectedIconPath": "images/view-active.png",
+        "iconPath": "images/default.jpg",
+        "selectedIconPath": "images/default.jpg",
         "text": "查看成绩"
       }
     ]
