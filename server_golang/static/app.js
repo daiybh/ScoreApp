@@ -130,75 +130,126 @@ document.getElementById('queryForm').addEventListener('submit', async function(e
     }
 });
 
-// 显示成绩卡片
+// 显示成绩表格
 function displayScores(scores) {
     const container = document.getElementById('scoresContainer');
 
     if (!scores || scores.length === 0) {
-        container.innerHTML = '<div class="col-12"><div class="alert alert-warning">没有找到相关成绩记录</div></div>';
+        container.innerHTML = '<div class="alert alert-warning">没有找到相关成绩记录</div>';
         return;
     }
 
-    container.innerHTML = '';
-// 需要对scores 排序 按考试时间升序
-
+    // 对scores排序，按考试时间升序
     scores.sort((a, b) => new Date(a.exam_time) - new Date(b.exam_time));
-    scores.forEach(score => {
-        // 处理数据，确保score是对象
+    
+    // 处理数据，确保score是对象
+    const processedScores = scores.map(score => {
         const scoreData = typeof score === 'string' ? JSON.parse(score) : score;
-
-        const card = document.createElement('div');
-        card.className = 'col-md-6 col-lg-4 mb-4';
-
+        
         // 确定成绩等级和对应的颜色
         let scoreLevel = '';
-        let scoreColor = '';
+        let badgeClass = '';
         const scoreValue = parseFloat(scoreData.score);
         const maxScore = parseFloat(scoreData.maxScore || 100);
         const percentage = (scoreValue / maxScore) * 100;
-
+        
         if (percentage >= 90) {
             scoreLevel = '优秀';
-            scoreColor = 'success';
+            badgeClass = 'bg-success';
         } else if (percentage >= 80) {
             scoreLevel = '良好';
-            scoreColor = 'info';
+            badgeClass = 'bg-info';
         } else if (percentage >= 70) {
             scoreLevel = '中等';
-            scoreColor = 'primary';
+            badgeClass = 'bg-primary';
         } else if (percentage >= 60) {
             scoreLevel = '及格';
-            scoreColor = 'warning';
+            badgeClass = 'bg-warning';
         } else {
             scoreLevel = '不及格';
-            scoreColor = 'danger';
+            badgeClass = 'bg-danger';
         }
+        
+        // 返回处理后的数据
+        return {
+            name: scoreData.name,
+            subject: scoreData.subject,
+            score: scoreData.score,
+            maxScore: scoreData.maxScore || '100',
+            level: `<span class="badge ${badgeClass}">${scoreLevel}</span>`,
+            exam_time: formatDate(scoreData.exam_time),
+            rank: scoreData.rank || '-',
+            avgScore: scoreData.avgScore || '-',
+            highScore: scoreData.highScore || '-',
+            examContent: scoreData.examContent || '-'
+        };
+    });
+    
+    // 创建bootstrap-table表格
+    container.innerHTML = `
+        <table id="scoreTable" 
+               data-toggle="table" 
+               data-search="true"
+               data-show-refresh="true"
+               data-show-toggle="true"
+               data-show-fullscreen="true"
+               data-show-columns="true"
+               data-show-columns-toggle-all="true"
+               data-detail-view="true"
+               data-detail-formatter="detailFormatter"
+               data-pagination="true"
+               data-page-size="10"
+               data-page-list="[10, 25, 50, 100, all]"
+               data-show-extended-pagination="true"
+               data-sort-name="exam_time"
+               data-sort-order="asc">
+            <thead>
+                <tr>
+                    <th data-field="name" data-sortable="true">姓名</th>
+                    <th data-field="subject" data-sortable="true">科目</th>
+                    <th data-field="score" data-sortable="true">分数</th>
+                    <th data-field="maxScore" data-sortable="true">满分</th>
+                    <th data-field="level" data-sortable="false">等级</th>
+                    <th data-field="exam_time" data-sortable="true">考试日期</th>
+                    <th data-field="rank" data-sortable="true">排名</th>
+                    <th data-field="avgScore" data-sortable="true">平均分</th>
+                    <th data-field="highScore" data-sortable="true">最高分</th>
+                    <th data-field="examContent" data-sortable="false">考试内容</th>
+                </tr>
+            </thead>
+        </table>
+        <div class="alert alert-info mt-3">
+            <small>成绩记录时间：${new Date().toLocaleString('zh-CN')}</small>
+        </div>
+    `;
+    
+    // 初始化bootstrap-table并加载数据
+    $('#scoreTable').bootstrapTable({
+        data: processedScores
+    });
+}
 
-        card.innerHTML = `
-            <div class="card score-card h-100">
-                <div class="card-header bg-${scoreColor} text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">${scoreData.subject}</h5>
-                    <span class="badge bg-light text-dark">${scoreLevel}</span>
+// 详情格式化函数
+function detailFormatter(index, row) {
+    return [
+        `<div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>姓名：</strong>${row.name}</p>
+                    <p><strong>科目：</strong>${row.subject}</p>
+                    <p><strong>分数：</strong>${row.score} / ${row.maxScore}</p>
+                    <p><strong>等级：</strong>${row.level}</p>
                 </div>
-                <div class="card-body">
-                    <h4 class="card-title">${scoreData.score} ${scoreData.maxScore ? '/ ' + scoreData.maxScore : ''}</h4>
-                    <p class="card-text">
-                        <strong>姓名：</strong>${scoreData.name}<br>
-                        <strong>考试日期：</strong>${formatDate(scoreData.exam_time)}<br>
-                        ${scoreData.rank ? `<strong>排名：</strong>${scoreData.rank}<br>` : ''}
-                        ${scoreData.avgScore ? `<strong>平均分：</strong>${scoreData.avgScore}<br>` : ''}
-                        ${scoreData.highScore ? `<strong>最高分：</strong>${scoreData.highScore}<br>` : ''}
-                        ${scoreData.examContent ? `<strong>考试内容：</strong>${scoreData.examContent}` : ''}
-                    </p>
-                </div>
-                <div class="card-footer text-muted">
-                    <small>成绩记录时间：${new Date().toLocaleString('zh-CN')}</small>
+                <div class="col-md-6">
+                    <p><strong>考试日期：</strong>${row.exam_time}</p>
+                    <p><strong>排名：</strong>${row.rank}</p>
+                    <p><strong>平均分：</strong>${row.avgScore}</p>
+                    <p><strong>最高分：</strong>${row.highScore}</p>
                 </div>
             </div>
-        `;
-
-        container.appendChild(card);
-    });
+            ${row.examContent !== '-' ? `<div class="row"><div class="col-12"><p><strong>考试内容：</strong>${row.examContent}</p></div></div>` : ''}
+        </div>`
+    ].join('');
 }
 
 // displayScoreChart 函数已移至 scoreChart.js 文件
