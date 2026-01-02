@@ -196,17 +196,21 @@ func (h *Handlers) SetupRoutes() *gin.Engine {
 		c.Next()
 	})
 
-	// 静态文件服务
-	r.Static("/static", "./static")
-	r.StaticFile("/", "./static/index.html")
-
-	// API路由组
+	// API路由组 - 放在静态文件路由之前，避免路由冲突
 	api := r.Group("/api")
 	{
 		api.GET("/health", h.HealthCheck)
 		api.GET("/scores", h.GetScores)
 		api.POST("/scores", h.AddScore)
 	}
+
+	// 静态文件服务 - 使用 /static 前缀，避免与API路由冲突
+	r.Static("/static", "./static")
+	
+	// 添加首页路由，避免根路径冲突
+	r.GET("/", func(c *gin.Context) {
+		c.File("./static/index.html")
+	})
 
 	// 添加404处理
 	r.NoRoute(func(c *gin.Context) {
