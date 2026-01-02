@@ -1,3 +1,13 @@
+// 格式化日期
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
 // 学生成绩分析类
 class ScoreAnalysis {
     constructor(chartsContainer, data) {
@@ -7,7 +17,7 @@ class ScoreAnalysis {
         this.bindEvents();
     }
 
-    createDiv(idName){
+    createDiv(idName) {
         const div = document.createElement('div');
         div.id = idName;
         div.className = 'chart-box';
@@ -47,7 +57,7 @@ class ScoreAnalysis {
 
             subjectData[item.subject].push({
                 exam_time: item.exam_time,
-                score: item.score /item.maxScore * 100, // 标准化到百分制
+                score: item.score / item.maxScore * 100, // 标准化到百分制
                 highScore: item.highScore,
                 avgScore: item.avgScore
             });
@@ -63,7 +73,6 @@ class ScoreAnalysis {
 
     // 绘制成绩趋势图
     drawScoreTrendChart() {
-        console.log('drawScoreTrendChart');
         const processedData = this.processScoreTrendData();
 
         const series = [];
@@ -77,7 +86,7 @@ class ScoreAnalysis {
 
             const examDates1 = subjectItems.map(item => item.exam_time);
             examDates = examDates.concat(examDates1);
-            
+
             series.push({
                 name: `${subject}`,
                 type: 'line',
@@ -309,9 +318,106 @@ class ScoreAnalysis {
         this.data = newData;
         this.drawAllCharts();
     }
+    drawTable(scores) {
+        const container = document.getElementById('scoresTable-container');
+
+        if (!scores || scores.length === 0) {
+            container.innerHTML = '<div class="alert alert-warning">没有找到相关成绩记录</div>';
+            return;
+        }
+
+        // 对scores排序，按考试时间升序
+        scores.sort((a, b) => new Date(a.exam_time) - new Date(b.exam_time));
+        // 处理数据，确保score是对象
+        const processedScores = scores.map(score => {
+            const scoreData = typeof score === 'string' ? JSON.parse(score) : score;
+
+            // 确定成绩等级和对应的颜色
+            let scoreLevel = '';
+            let badgeClass = '';
+            const scoreValue = parseFloat(scoreData.score);
+            const maxScore = parseFloat(scoreData.maxScore || 100);
+            const percentage = (scoreValue / maxScore) * 100;
+
+            if (percentage >= 90) {
+                scoreLevel = '优秀';
+                badgeClass = 'bg-success';
+            } else if (percentage >= 80) {
+                scoreLevel = '良好';
+                badgeClass = 'bg-info';
+            } else if (percentage >= 70) {
+                scoreLevel = '中等';
+                badgeClass = 'bg-primary';
+            } else if (percentage >= 60) {
+                scoreLevel = '及格';
+                badgeClass = 'bg-warning';
+            } else {
+                scoreLevel = '不及格';
+                badgeClass = 'bg-danger';
+            }
+
+            // 返回处理后的数据
+            return {
+                name: scoreData.name,
+                subject: scoreData.subject,
+                score: scoreData.score,
+                maxScore: scoreData.maxScore || '100',
+                level: `<span class="badge ${badgeClass}">${scoreLevel}</span>`,
+                exam_time: formatDate(scoreData.exam_time),
+                rank: scoreData.rank || '-',
+                avgScore: scoreData.avgScore || '-',
+                highScore: scoreData.highScore || '-',
+                examContent: scoreData.examContent || '-'
+            };
+        });
+
+        // 创建bootstrap-table表格
+        container.innerHTML = `
+        <table id="scoreTable" 
+               data-toggle="table" 
+               data-search="true"
+               data-show-refresh="true"
+               data-show-toggle="true"
+               data-show-fullscreen="true"
+               data-show-columns="true"
+               data-show-columns-toggle-all="true"
+               data-detail-view="true"
+               data-detail-formatter="detailFormatter"
+               data-pagination="true"
+               data-page-size="10"
+               data-page-list="[10, 25, 50, 100, all]"
+               data-show-extended-pagination="true"
+               data-sort-name="exam_time"
+               data-sort-order="asc">
+            <thead>
+                <tr>
+                    <th data-field="name" data-sortable="true">姓名</th>
+                    <th data-field="subject" data-sortable="true">科目</th>
+                    <th data-field="score" data-sortable="true">分数</th>
+                    <th data-field="maxScore" data-sortable="true">满分</th>
+                    <th data-field="level" data-sortable="false">等级</th>
+                    <th data-field="exam_time" data-sortable="true">考试日期</th>
+                    <th data-field="rank" data-sortable="true">排名</th>
+                    <th data-field="avgScore" data-sortable="true">平均分</th>
+                    <th data-field="highScore" data-sortable="true">最高分</th>
+                    <th data-field="examContent" data-sortable="false">考试内容</th>
+                </tr>
+            </thead>
+        </table>
+        <div class="alert alert-info mt-3">
+            <small>成绩记录时间：${new Date().toLocaleString('zh-CN')}</small>
+        </div>
+    `;
+
+        // 初始化bootstrap-table并加载数据
+        $('#scoreTable').bootstrapTable({
+            data: processedScores
+        });
+    }
 
     // 绘制所有图表
     drawAllCharts() {
+        this.drawTable(this.data);
         this.drawScoreTrendChart();
         this.drawComparisonChart();
         this.drawRankChangeChart();
