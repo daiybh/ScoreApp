@@ -111,6 +111,7 @@
     </div>
 
     <script src="js/score-analysis.js"></script>
+    <script src="js/similarData.js">   </script>
     <script>
         // 定义全局变量scoreAnalysis
         let scoreAnalysis;
@@ -120,8 +121,9 @@
         // 页面加载完成后初始化图表
         window.onload = function () {
             let charts_container = document.querySelector('.charts-container');
-            scoreAnalysis = new ScoreAnalysis(charts_container, []);
+            scoreAnalysis = new ScoreAnalysis(charts_container, similarData);
             // 初始化时没有数据，可以先不绘制图表或显示提示
+            scoreAnalysis.updateData(similarData);
         };
         
         // 查询成绩表单

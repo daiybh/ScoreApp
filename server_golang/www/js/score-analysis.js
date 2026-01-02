@@ -47,7 +47,7 @@ class ScoreAnalysis {
 
             subjectData[item.subject].push({
                 exam_time: item.exam_time,
-                score: item.score,
+                score: item.score /item.maxScore * 100, // 标准化到百分制
                 highScore: item.highScore,
                 avgScore: item.avgScore
             });
@@ -63,6 +63,7 @@ class ScoreAnalysis {
 
     // 绘制成绩趋势图
     drawScoreTrendChart() {
+        console.log('drawScoreTrendChart');
         const processedData = this.processScoreTrendData();
 
         const series = [];
@@ -342,104 +343,3 @@ class ScoreAnalysis {
         this.updateData(newData);
     }
 }
-
-// 模拟从API获取的数据
-const data = [
-    {
-        name: "张三",
-        subject: "数学",
-        score: 85,
-        exam_time: "2023-01-15",
-        maxScore: 100,
-        avgScore: 78,
-        highScore: 95,
-        rank: 5
-    },
-    {
-        name: "张三",
-        subject: "数学",
-        score: 70,
-        exam_time: "2023-03-20",
-        maxScore: 100,
-        avgScore: 82,
-        highScore: 98,
-        rank: 3
-    },
-    {
-        name: "张三",
-        subject: "数学",
-        score: 88,
-        exam_time: "2023-05-10",
-        maxScore: 100,
-        avgScore: 80,
-        highScore: 96,
-        rank: 4
-    },
-    {
-        name: "张三",
-        subject: "数学",
-        score: 70,
-        exam_time: "2025-07-05",
-        maxScore: 100,
-        avgScore: 85,
-        highScore: 99,
-        rank: 2
-    },
-    {
-        name: "张三",
-        subject: "语文",
-        score: 60,
-        exam_time: "2023-05-10",
-        maxScore: 100,
-        avgScore: 85,
-        highScore: 99,
-        rank: 2
-    },
-     {
-        name: "张三",
-        subject: "语文",
-        score: 50,
-        exam_time: "2025-05-05",
-        maxScore: 100,
-        avgScore: 85,
-        highScore: 99,
-        rank: 2
-    },
-    {
-        name: "张三",
-        subject: "语文",
-        score: 92,
-        exam_time: "2025-07-05",
-        maxScore: 100,
-        avgScore: 85,
-        highScore: 99,
-        rank: 2
-    },
-     {
-        name: "张三",
-        subject: "英语",
-        score: 50,
-        exam_time: "2025-05-05",
-        maxScore: 100,
-        avgScore: 85,
-        highScore: 99,
-        rank: 2
-    },
-    {
-        name: "张三",
-        subject: "英语",
-        score: 92,
-        exam_time: "2025-07-05",
-        maxScore: 100,
-        avgScore: 85,
-        highScore: 99,
-        rank: 2
-    }
-];
-
-// 页面加载完成后初始化图表
-window.onload = function() {
-    let charts_container = document.querySelector('.charts-container');
-    const scoreAnalysis = new ScoreAnalysis(charts_container,data);
-    scoreAnalysis.drawAllCharts();
-};
